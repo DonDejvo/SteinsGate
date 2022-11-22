@@ -1,3 +1,8 @@
+/*
+IBN 5100 is fictive old computer from certain anime which resembles the real IBM 5100
+https://en.m.wikipedia.org/wiki/IBM_5100
+*/
+
 const SimpleVertexSource = `#version 300 es
 layout (location = 0)
 in vec2 vPosition;
@@ -32,19 +37,20 @@ precision highp float;
 in vec2 uv;
 
 uniform sampler2D sampler;
-uniform float aspect;
 
 out vec4 fragColor;
+
+vec2 pixelize(vec2 st, vec2 density) {
+    return floor(st * density) / density;
+}
 
 void main() {
     vec4 texColor = texture(sampler, uv);
     vec3 rgb = texColor.rgb;
-    if((rgb.r + rgb.g + rgb.b) / 3. > .59) {
-        rgb = vec3(0.164, 0.612, 0.502);
-    }
-    else {
-        rgb = vec3(0.047, 0.165, 0.098);
-    }
+    float brightness = (rgb.r + rgb.g + rgb.b) / 3.0;
+    vec3 c1 = vec3(0.164, 0.612, 0.502),
+    c2 = vec3(0.047, 0.165, 0.098);
+    rgb = mix(c2, c1, brightness);
     fragColor = vec4(rgb, 1.);
 }
 `;
@@ -116,10 +122,10 @@ class ScreenGeometry extends Geometry {
             681/w*2-1, -746/h*2+1
         ]);
         this.uvs = new Float32Array([
-            0.125, 0,
-            0.875, 0,
-            0.875, 1,
-            0.125, 1
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1
         ]);
         this.vertexCount = 4;
     }
@@ -277,8 +283,9 @@ class AssetPool {
 }
 
 const Main = async () => {
-    const W = 360,
-    H = 240;
+    const assetUrl = "";
+    const W = 1920,
+    H = 1080;
     let canvas;
     let gl;
 
@@ -301,9 +308,9 @@ const Main = async () => {
     gl = canvas.getContext("webgl2");
 
     await Promise.all([
-        AssetPool.LoadImage("IBN5100", "assets/IBN5100.png"),
-        AssetPool.LoadImage("intro", "assets/intro.png"),
-        AssetPool.LoadVideo("SteinsGateOP", "assets/SteinsGateOP-480p.mp4")
+        AssetPool.LoadImage("IBN5100", assetUrl + "assets/IBN5100.png"),
+        AssetPool.LoadImage("intro", assetUrl + "assets/intro.png"),
+        AssetPool.LoadVideo("SteinsGateOP", assetUrl + "assets/SteinsGateOP-480p.mp4")
     ]);
 
     computerTex = Texture.FromImage(gl, AssetPool.GetImage("IBN5100"));
