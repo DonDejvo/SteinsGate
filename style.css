@@ -1,0 +1,14 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    background: black;
+}
+
+canvas {
+    display: block;
+    image-rendering: pixelated;
+}
