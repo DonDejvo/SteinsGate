@@ -9,6 +9,8 @@ body {
 }
 
 canvas {
+    width: 100%;
+    height: auto;
     display: block;
     image-rendering: pixelated;
 }
